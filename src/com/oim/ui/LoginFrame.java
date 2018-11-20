@@ -7,6 +7,7 @@ package com.oim.ui;
 
 import com.oim.common.box.ImageBox;
 import com.only.fx.TitlePane;
+import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
@@ -31,7 +32,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import javafx.stage.Stage;
 
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 
 /**
@@ -143,7 +146,9 @@ public class LoginFrame extends BaseFrame {
         loginButton.setLayoutY(107);
         loginButton.setPrefHeight(30);
         loginButton.setPrefWidth(194);
-        //TODO
+        loginButton.setOnMouseClicked((Event event) -> {
+            login();
+        });
 
         rememberCheckBox.setText("记住密码");
         autoCheckBox.setText("自动登录");
@@ -329,6 +334,12 @@ public class LoginFrame extends BaseFrame {
         });
     }
 
+    public void login(){
+        Platform.runLater(()->{
+            new MainFrame().show();
+            this.hide();
+        });
+    }
     private void iniEvent() {
 
     }
