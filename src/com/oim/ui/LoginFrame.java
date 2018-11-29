@@ -6,6 +6,9 @@
 package com.oim.ui;
 
 import com.oim.common.box.ImageBox;
+import com.oim.common.util.Config;
+import com.oim.common.util.MessageConfig;
+import com.oim.common.util.User;
 import com.only.fx.TitlePane;
 import javafx.application.Platform;
 import javafx.event.Event;
@@ -34,8 +37,13 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 
+import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 /**
  * 登录窗口
@@ -43,6 +51,10 @@ import java.io.IOException;
  * @author XiaHui
  */
 public class LoginFrame extends BaseFrame {
+
+    private Socket client;
+    private ObjectInputStream in;
+    private ObjectOutputStream out;
 
     private DropShadow dropShadow = new DropShadow();
 
@@ -63,8 +75,21 @@ public class LoginFrame extends BaseFrame {
     private Button towCodeButton = new Button();
 
     public LoginFrame() {
+        initclient();
         initComponent();
         iniEvent();
+    }
+
+    public void initclient(){
+        try {
+            client = new Socket(Config.serverIP,Config.port);
+            out = new ObjectOutputStream(client.getOutputStream());
+            in = new ObjectInputStream(client.getInputStream());
+        }catch (UnknownHostException e){
+            e.printStackTrace();
+        }catch (IOException e1){
+            e1.printStackTrace();
+        }
     }
 
     private void initComponent() {
@@ -335,10 +360,44 @@ public class LoginFrame extends BaseFrame {
     }
 
     public void login(){
-        Platform.runLater(()->{
-            new MainFrame().show();
-            this.hide();
-        });
+        String username = accountField.getText();
+        String password = passwordField.getText();
+
+        MessageConfig loginmess = new MessageConfig();
+        User u = new User();
+        u.setUsername(username);
+        u.setPassword(password);
+
+        loginmess.setFrom(u);
+        loginmess.setType("login");
+
+        try {
+            out.writeObject(loginmess);
+            out.flush();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+        try{
+            MessageConfig result = (MessageConfig)in.readObject();
+
+            if (result.getContent().equals("success")){
+                Platform.runLater(()->{
+                    new MainFrame().show();
+                    this.hide();
+                });
+            }
+            else {
+                JOptionPane.showMessageDialog(null,"LoginFailed,","提示",JOptionPane.INFORMATION_MESSAGE);
+            }
+        }catch (ClassNotFoundException e){
+            e.printStackTrace();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+
+        //TODO
     }
     private void iniEvent() {
 

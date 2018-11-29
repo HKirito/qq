@@ -13,6 +13,8 @@ import com.oim.ui.list.ListRootPanel;
 import com.oim.ui.list.TabPanel;
 import com.oim.ui.main.UserDataPanel;
 import java.util.Random;
+
+import javafx.application.Platform;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -371,6 +373,11 @@ public class MainFrame extends BaseFrame {
                     }
                     if (me.getClickCount() == 2) {
                         head.setPulse(!head.isPulse());
+                        Platform.runLater(()->{
+
+                             ChatFrame chatFrame = new ChatFrame(head.getNickname(),"华农兄弟",null);
+                             chatFrame.setVisible(true);
+                        });
                     }
                 });
                 teamNode[j].addItem(head);
@@ -454,7 +461,7 @@ public class MainFrame extends BaseFrame {
         VBox box4 = new VBox();
         WebView webView = new WebView();
         WebEngine webEngine = webView.getEngine();
-        webEngine.load("http://www.oschina.net/code/snippet_935786_52805");
+        webEngine.load("https://github.com/HKirito");
         box4.getChildren().add(webView);
         box4.setStyle("-fx-background-color:rgba(215, 165, 230, 1)");
         this.addTab(normalImage, hoverImage, selectedImage, box4);
@@ -464,9 +471,6 @@ public class MainFrame extends BaseFrame {
         selectedImage = ImageBox.getImageClassPath("/resources/main/images/panel/main_panel_phone_inco_selected.png");
 
         VBox box5 = new VBox();
-//        webView = new WebView();
-//        webEngine = webView.getEngine();
-//        webEngine.load("http://download.csdn.net/detail/onlyxiahui/9434701");
         box5.getChildren().add(new Button("我的手机"));
         box5.setStyle("-fx-background-color:rgba(112, 245, 86, 1);");
         this.addTab(normalImage, hoverImage, selectedImage, box5);
